@@ -1,0 +1,8 @@
+export class Book {
+    constructor(name, genre, pageAmount) {
+        this.name = name;
+        this.genre = genre;
+        this.pageAmount = pageAmount;
+    }
+}
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiYm9vay5qcyIsInNvdXJjZVJvb3QiOiIiLCJzb3VyY2VzIjpbIi4uLy4uL3NyYy9ib29rLnRzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiJBQUFBLE1BQU0sT0FBTyxJQUFJO0lBS2YsWUFBYSxJQUFZLEVBQUUsS0FBYSxFQUFFLFVBQWtCO1FBQzFELElBQUksQ0FBQyxJQUFJLEdBQUcsSUFBSSxDQUFBO1FBQ2hCLElBQUksQ0FBQyxLQUFLLEdBQUcsS0FBSyxDQUFBO1FBQ2xCLElBQUksQ0FBQyxVQUFVLEdBQUcsVUFBVSxDQUFBO0lBQzlCLENBQUM7Q0FDRiIsInNvdXJjZXNDb250ZW50IjpbImV4cG9ydCBjbGFzcyBCb29rIHtcbiAgbmFtZTogc3RyaW5nXG4gIGdlbnJlOiBzdHJpbmdcbiAgcGFnZUFtb3VudDogbnVtYmVyXG5cbiAgY29uc3RydWN0b3IgKG5hbWU6IHN0cmluZywgZ2VucmU6IHN0cmluZywgcGFnZUFtb3VudDogbnVtYmVyKSB7XG4gICAgdGhpcy5uYW1lID0gbmFtZVxuICAgIHRoaXMuZ2VucmUgPSBnZW5yZVxuICAgIHRoaXMucGFnZUFtb3VudCA9IHBhZ2VBbW91bnRcbiAgfVxufVxuIl19
