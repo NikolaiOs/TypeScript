@@ -1,14 +1,22 @@
-import { renderSearchFormBlock } from './search-form.js'
+import { renderSearchFormBlock} from './search-form.js'
 import { renderSearchStubBlock } from './search-results.js'
-import { renderUserBlock } from './user.js'
-import { renderToast } from './lib.js'
+import { renderUserBlock, getUserData } from './user.js'
+import { getFavoritesItemsAmount } from './store/favoriteItems.js'
+import { Timer } from './timer.js'
+import { bookTimeLimitHandler } from './search-results.js'
+
+localStorage.setItem(
+  'user',
+  JSON.stringify({ username: 'nik', avatarUrl: '/img/avatar.png' })
+)
 
 window.addEventListener('DOMContentLoaded', () => {
-  renderUserBlock('0')
-  renderSearchFormBlock()
+  const { username, avatarUrl } = getUserData()
+  const favoriteItemsAmount = getFavoritesItemsAmount()
+  const timer: Timer = new Timer()
+
+  renderUserBlock(username, avatarUrl, favoriteItemsAmount)
+  renderSearchFormBlock(timer)
   renderSearchStubBlock()
-  renderToast(
-      {text: 'Это пример уведомления. Используйте его при необходимости', type: 'success'},
-      {name: 'Понял', handler: () => {console.log('Уведомление закрыто')}}
-  )
+  document.addEventListener('timer-end', bookTimeLimitHandler)
 })

@@ -1,6 +1,12 @@
-import { renderBlock } from './lib.js'
+import { renderBlock, renderToast } from './lib.js'
+import { IPlace } from './place.js'
+import { isFavoriteItem } from './store/favoriteItems.js'
+import { toggleFavorite } from './toggleFavorite.js'
+import { toBook } from './toBook.js'
+import { ToBookIdPrefix, ToggleIdPrefix } from './types/types.js'
+import { ISource } from './sources.js'
 
-export function renderSearchStubBlock () {
+export function renderSearchStubBlock() {
   renderBlock(
     'search-results-block',
     `
@@ -12,7 +18,7 @@ export function renderSearchStubBlock () {
   )
 }
 
-export function renderEmptyOrErrorSearchBlock (reasonMessage) {
+export function renderEmptyOrErrorSearchBlock(reasonMessage) {
   renderBlock(
     'search-results-block',
     `
@@ -24,7 +30,50 @@ export function renderEmptyOrErrorSearchBlock (reasonMessage) {
   )
 }
 
-export function renderSearchResultsBlock () {
+export function getSearchResultsMarkup(places: IPlace[]) {
+  let markup = ''
+
+  places.forEach((place) => {
+    const { id, name, description, remoteness, image, price, source } = place
+    const toggleIdPrefix: ToggleIdPrefix = 'toggle-'
+    const toggleId = `${toggleIdPrefix}${source}_${id}`
+    const toBookIdPrefix: ToBookIdPrefix = 'to-book-'
+    const toBookId = `${toBookIdPrefix}${source}_${id}`
+    markup += `
+      <li class="result">
+        <div class="result-container">
+          <div class="result-img-container">
+            <div
+              id=${toggleId}
+              class="favorites ${isFavoriteItem(toggleId) ? 'active' : ''}"
+            ></div>
+            <img class="result-img" src="${image}" alt="">
+          </div>
+          <div class="result-info">
+            <div class="result-info--header">
+              <p>${name}</p>
+              <p class="price">${price}&#8381;</p>
+            </div>
+            <div class="result-info--map">
+              <i class="map-icon"></i>
+              ${remoteness != null ? remoteness : '-'}км от вас
+            </div>
+            <div class="result-info--descr">${description}</div>
+            <div class="result-info--footer">
+              <div>
+                <button id="${toBookId}">Забронировать</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </li>
+    `
+  })
+
+  return markup
+}
+
+export function renderSearchResultsBlock(places: IPlace[], sources: ISource[]) {
   renderBlock(
     'search-results-block',
     `
@@ -40,49 +89,42 @@ export function renderSearchResultsBlock () {
         </div>
     </div>
     <ul class="results-list">
-      <li class="result">
-        <div class="result-container">
-          <div class="result-img-container">
-            <div class="favorites active"></div>
-            <img class="result-img" src="./img/result-1.png" alt="">
-          </div>	
-          <div class="result-info">
-            <div class="result-info--header">
-              <p>YARD Residence Apart-hotel</p>
-              <p class="price">13000&#8381;</p>
-            </div>
-            <div class="result-info--map"><i class="map-icon"></i> 2.5км от вас</div>
-            <div class="result-info--descr">Комфортный апарт-отель в самом сердце Санкт-Петербрга. К услугам гостей номера с видом на город и бесплатный Wi-Fi.</div>
-            <div class="result-info--footer">
-              <div>
-                <button>Забронировать</button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </li>
-      <li class="result">
-        <div class="result-container">
-          <div class="result-img-container">
-            <div class="favorites"></div>
-            <img class="result-img" src="./img/result-2.png" alt="">
-          </div>	
-          <div class="result-info">
-            <div class="result-info--header">
-              <p>Akyan St.Petersburg</p>
-              <p class="price">13000&#8381;</p>
-            </div>
-            <div class="result-info--map"><i class="map-icon"></i> 1.1км от вас</div>
-            <div class="result-info--descr">Отель Akyan St-Petersburg с бесплатным Wi-Fi на всей территории расположен в историческом здании Санкт-Петербурга.</div>
-            <div class="result-info--footer">
-              <div>
-                <button>Забронировать</button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </li>
+      ${getSearchResultsMarkup(places)}
     </ul>
     `
+  )
+
+  const favoritesButtons = document.querySelectorAll('.favorites')
+  favoritesButtons.forEach((button) => {
+    button.addEventListener('click', (event) => toggleFavorite(event, sources))
+  })
+
+  const toBookButtons = document.querySelectorAll(
+    '.result-info--footer button'
+  )
+  toBookButtons.forEach((button) => {
+    button.addEventListener('click', (event) => toBook(event, sources))
+  })
+}
+
+export function bookTimeLimitHandler(): void {
+  const toBookButtons = document.querySelectorAll(
+    '.result-info--footer button'
+  )
+  toBookButtons.forEach((button) =>
+    button.setAttribute('disabled', 'disabled')
+  )
+
+  renderToast(
+    {
+      text: 'Пожалуйста обновите результаты поиска.',
+      type: 'error',
+    },
+    {
+      name: 'Закрыть',
+      handler: () => {
+        console.log('Уведомление закрыто');
+      },
+    }
   )
 }
