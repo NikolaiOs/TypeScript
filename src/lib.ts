@@ -26,7 +26,7 @@ export function renderToast (message, action) {
       if (action != null && action.handler != null) {
         action.handler()
       }
-      // renderToast(null)
+      renderToast(null, null)
     }
   }
 }
